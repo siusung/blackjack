@@ -4,7 +4,8 @@ Started on 8/22/2020
 Trying to get back into the groove of coding and build some confidence that I can make my own project!
 
 Steps for tomorrow:
-Create hit or pass mechanism and record the card values
+fix hit so that it keeps asking
+display the dealer's hand in a more pretty way "you lucky sonofagun"
 Record card value of the dealer, 17 hit limit
 """
 
@@ -93,7 +94,7 @@ def main():
                     return True, "player"
                 elif hand_value == dealer_hand.check_value():
                     return True, "tie"
-                elif hand_value < dealer_hand.check_value():
+                elif hand_value < dealer_hand.check_value() or hand_value > 21:
                     return True, "dealer"
                 return False, None
 
@@ -115,6 +116,16 @@ def main():
                     if dealer_hand.check_value() + 10 <= 21:
                         return 10
                 return 0
+
+            def player_hit_stand():
+                choice = None
+                while choice not in ["s", "h"]:
+                    choice = input("\nHit or Stand? [h/s]: ").lower()
+                if choice == "h":
+                    player_hand.add_card(game_deck.deal_one())
+                    return 1
+                elif choice == "s":
+                    return 0
 
                 
 
@@ -145,6 +156,22 @@ def main():
                 print(f"\n{player_name}'s new hand value: {player_hand_value}")
 
             win, winner = win_check(player_hand_value)
+            
+            # hit/stand loop
+            while True:
+                if player_hit_stand() == 1:
+                    player_hand_value = player_hand.check_value()
+                    win, winner = win_check(player_hand_value)
+                    print('\n')
+                    print(player_name + "'s new hand: ")
+                    print('\n')
+                    print(player_hand.full_hand())
+                    print('\n')
+                    print(f"Total: {player_hand_value}")
+                    if win:
+                        break
+                else:
+                    break
 
             # win conditions
             if winner == "player":
