@@ -4,7 +4,7 @@ Started on 8/22/2020
 Trying to get back into the groove of coding and build some confidence that I can make my own project!
 
 Steps for tomorrow:
-fix hit so that it keeps asking
+let dealer play hand
 display the dealer's hand in a more pretty way "you lucky sonofagun"
 Record card value of the dealer, 17 hit limit
 """
@@ -90,13 +90,16 @@ def main():
                     print(dealer_hand.full_hand())
                     print('\n')
                     print(f"Total: {dealer_hand.check_value()}")
-                if hand_value > dealer_hand.check_value(): 
+                if hand_value < dealer_hand.check_value() or hand_value > 21:
+                    return True, "dealer"
+                elif hand_value > dealer_hand.check_value(): 
                     return True, "player"
                 elif hand_value == dealer_hand.check_value():
                     return True, "tie"
-                elif hand_value < dealer_hand.check_value() or hand_value > 21:
-                    return True, "dealer"
+
                 return False, None
+
+                
 
             # check for soft hands
             def player_ace_check(hand):
@@ -153,7 +156,9 @@ def main():
             change_value = player_ace_check(player_hand)
             player_hand_value += change_value
             if player_hand_value != og_player_hand_value:
-                print(f"\n{player_name}'s new hand value: {player_hand_value}")
+                print(f"\n{player_name}'s new hand total: {player_hand_value}")
+            else:
+                print(f"Your total is the same: {player_hand_value}")
 
             win, winner = win_check(player_hand_value)
             
@@ -161,17 +166,17 @@ def main():
             while True:
                 if player_hit_stand() == 1:
                     player_hand_value = player_hand.check_value()
-                    win, winner = win_check(player_hand_value)
                     print('\n')
                     print(player_name + "'s new hand: ")
                     print('\n')
                     print(player_hand.full_hand())
                     print('\n')
                     print(f"Total: {player_hand_value}")
-                    if win:
+                    if player_hand_value > 21:
                         break
                 else:
                     break
+            win, winner = win_check(player_hand_value)
 
             # win conditions
             if winner == "player":
@@ -179,6 +184,8 @@ def main():
                 print(f"\n{player_name} wins Round {round_number}!\nBlackjack pays 3 to 2: your new balance is {player.bankroll}")
             elif winner == "dealer":
                 player.bankroll -= player_bet
+                if player_hand_value > 21:
+                    print("\nBUST!")
                 print(f"\nDealer wins Round {round_number}!\nYou've lost your bet: your balance is {player.bankroll}")
             elif winner == "tie":
                 player.bankroll += player_bet
