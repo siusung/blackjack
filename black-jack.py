@@ -83,7 +83,7 @@ def main():
             # check for wins
             def win_check(hand_value):
                 if hand_value == 21:
-                    print("\nWhy you lucky sonofagun, BLACKJACK!\nBut hold on, we gotta check the Dealer's hand too: ")
+                    print("\nBLACKJACK!\nhold on tho, we gotta check the Dealer's hand too: ")
                     print('\n')
                     print("Dealer's Hand: ")
                     print('\n')
@@ -130,6 +130,14 @@ def main():
                 elif choice == "s":
                     return 0
 
+            def dealer_hit_stand(hand_value):
+                if hand_value < 17:
+                    dealer_hand.add_card(game_deck.deal_one())
+                    return 1
+                else:
+                    return 0
+
+
                 
 
             print(f"ROUND: {round_number}")
@@ -157,13 +165,14 @@ def main():
             player_hand_value += change_value
             if player_hand_value != og_player_hand_value:
                 print(f"\n{player_name}'s new hand total: {player_hand_value}")
-            else:
-                print(f"Your total is the same: {player_hand_value}")
 
             win, winner = win_check(player_hand_value)
             
-            # hit/stand loop
+            # player hit/stand loop
             while True:
+                if player_hand_value == 21:
+                    win, winner = win_check(player_hand_value)
+                    break
                 if player_hit_stand() == 1:
                     player_hand_value = player_hand.check_value()
                     print('\n')
@@ -173,10 +182,25 @@ def main():
                     print('\n')
                     print(f"Total: {player_hand_value}")
                     if player_hand_value > 21:
+                        win, winner = win_check(player_hand_value)
                         break
                 else:
                     break
-            win, winner = win_check(player_hand_value)
+            
+            # dealer plays hand
+            print('\n')
+            print("Dealer's Hand: ")
+            print('\n')
+            print(dealer_hand.full_hand())
+            print('\n')
+            dealer_hand_value = dealer_hand.check_value()
+            og_dealer_hand_value = dealer_hand_value
+            print(f"Total: {dealer_hand_value}")
+
+            # dealer hit stand loop
+
+
+
 
             # win conditions
             if winner == "player":
