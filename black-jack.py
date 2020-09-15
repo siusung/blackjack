@@ -7,6 +7,7 @@ Trying to get back into the groove of coding and build some confidence that I ca
 import random
 import os
 import sys
+import time
 
 suits = ('Hearts', 'Diamonds', 'Spades', 'Clubs')
 
@@ -83,7 +84,9 @@ def main():
                     print(dealer_hand.full_hand())
                     print('\n')
                     print(f"Total: {dealer_hand.check_value()}")
-                if player_hand_value < dealer_hand_value or player_hand_value > 21:
+                if dealer_hand_value > 21:
+                    return True, "player"
+                elif player_hand_value < dealer_hand_value or player_hand_value > 21:
                     return True, "dealer"
                 elif player_hand_value > dealer_hand_value: 
                     return True, "player"
@@ -131,6 +134,7 @@ def main():
             print(f"ROUND: {round_number}")
 
             # displaying player's hand
+            time.sleep(1)
             print('\n')
             print(player_name + "'s Hand: ")
             print('\n')
@@ -140,12 +144,15 @@ def main():
             player_hand_value = player_hand.check_value()
             og_player_hand_value = player_hand_value
             print(f"Total: {player_hand_value}")
+            print("\n====================================================")
             
             # displaying dealer's hand
+            time.sleep(1)
             print("\nDealer's Hand: ")
             print('\n')
             print(dealer_hand.partial_hand(1))
             print("\nTotal: dunno yet")
+            print("\n====================================================")
 
             # checking for aces
             change_value = player_ace_check(player_hand)
@@ -154,7 +161,8 @@ def main():
                 print(f"\n{player_name}'s new hand total: {player_hand_value}")
 
             #wincheck shouldn't be here
-            win, winner = win_check(player_hand_value, dealer_hand.check_value())
+            # win, winner = win_check(player_hand_value, dealer_hand.check_value())
+            
             
             player_turn_end = False
 
@@ -165,13 +173,14 @@ def main():
                     win, winner = win_check(player_hand_value, dealer_hand.check_value())
                     break
                 if player_hit_stand() == 1:
-                    player_hand_value = player_hand.check_value()
+                    player_hand_value = player_hand.check_value() + change_value
                     print('\n')
                     print(player_name + "'s new hand: ")
                     print('\n')
                     print(player_hand.full_hand())
                     print('\n')
                     print(f"Total: {player_hand_value}")
+                    print("\n====================================================")
                     if player_hand_value > 21:
                         win, winner = win_check(player_hand_value, dealer_hand.check_value())
                         break
@@ -179,10 +188,13 @@ def main():
                     player_turn_end = True
                     break
 
+            
 
             # dealer hit/stand loop
             if player_turn_end:
-                print("\nDealer's turn to play:")
+                time.sleep(1)
+                print("\n============== DEALER'S TURN TO PLAY ===============")
+                time.sleep(1)
                 print("\nDealer's Full Hand: ")
                 print('\n')
                 print(dealer_hand.full_hand())
@@ -190,11 +202,14 @@ def main():
                 dealer_hand_value = dealer_hand.check_value()
                 og_dealer_hand_value = dealer_hand_value
                 print(f"Total: {dealer_hand_value}")
+                print("\n====================================================")
                 while True:
+                    time.sleep(1)
                     change_value = dealer_ace_check(dealer_hand)
                     dealer_hand_value += change_value
-                    if dealer_hand_value != og_dealer_hand_value:
-                        print(f"\nDealer's chose an ace value of 11. Total: {dealer_hand_value}")
+                    if change_value == 10:
+                        print(f"\nDealer chose an ace value of 11. Total: {dealer_hand_value}")
+                    time.sleep(1)
                     if dealer_hit_stand(dealer_hand_value) == 1:
                         print("\nDealer Hits!")
                         print("\nDealer's Full Hand: ")
@@ -203,16 +218,25 @@ def main():
                         print('\n')
                         dealer_hand_value = dealer_hand.check_value() + change_value
                         print(f"Total: {dealer_hand_value}")
+                        print("\n====================================================")
                         if dealer_hand_value > 21:
+                            time.sleep(1)
+                            print("\nDealer BUST!")
                             win, winner = win_check(player_hand_value, dealer_hand_value)
                             break
                     elif dealer_hit_stand(dealer_hand_value) == 0:
                         win, winner = win_check(player_hand_value, dealer_hand_value)
                         break
+                        time.sleep(1)
                         print(f"Total: {dealer_hand_value}")
+                        print("\n====================================================")
                         if dealer_hand_value > 21:
+                            time.sleep(1)
+                            print("\nDealer BUST!")
                             win, winner = win_check(player_hand_value, dealer_hand_value)
                             break
+
+            time.sleep(1)
 
             # win conditions
             if winner == "player":
@@ -220,7 +244,9 @@ def main():
                 print(f"\n{player_name} wins Round {round_number}!\nBlackjack pays 3 to 2: your new balance is {player.bankroll}")
             elif winner == "dealer":
                 if player_hand_value > 21:
-                    print("\nBUST!")
+                    print("\nPlayer BUST!")
+                if dealer_hand_value == 21:
+                    print("\nDealer BLACKJACK!")
                 print(f"\nDealer wins Round {round_number}!\nYou've lost your bet: your balance is {player.bankroll}")
             elif winner == "tie":
                 player.bankroll += player_bet
